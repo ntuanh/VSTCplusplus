@@ -1,0 +1,16 @@
+các hàm cơ bản trong Open CV :
+	-Hàm cv::imread("tên đường dẫn ")
+	- cv::imshow ("tên cửa sổ " , ảnh )
+	- cv::VideoCapture cap(0);
+	- Ghi lại hình ảnh vào tệp :
+	cv::VideoWriter writer("output.avi", cv::VideoWriter::fourcc('M','J','P','G'), 30, cv::Size(640, 480));
+	-  resize lại khung hình 
+	cv::Mat resizedImage;
+	cv::resize(image, resizedImage, cv::Size(320, 240));
+
+	- cv::threshold: Áp dụng ngưỡng để tách vùng ảnh.
+	-cv::findContours: Tìm các đường  nét  trong một ảnh nhị phân.
+	- cv::drawContours: Vẽ contours lên một hình ảnh.
+	- GaussianBlur(img , img);
+	test
+
