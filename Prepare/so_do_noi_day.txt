@@ -1,7 +1,7 @@
 {
-  "version": 1,
+  "version": 2,
   "author": "BTL",
-  "editor": "wokwi",
+  "editor": "ntuanh",
   "parts": [
     { "type": "wokwi-arduino-mega", "id": "mega", "top": 471, "left": 54, "attrs": {} },
     {
