@@ -1,5 +1,8 @@
 #include "Port.h"
+#include "Process.h"
 #include<Arduino_FreeRTOS.h>
+
+float minutes = 0.5;
 
 ///
 void TaskBlinkSEG(void *pvParameters);
@@ -10,7 +13,7 @@ void TaskBlinkLCD(void *pvParameters);
 
 byte pins[] = { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, // 10 led blue thẳng
                 23, 24, 25, 27, 29, 31, 33, 35, //8 led blue chéo
-                16, 3, 17, 18, 19, 20, 21, 37, 39, 41, // 10 led green thẳng
+                16, 3, 17, 18, 19, A4, A5, 37, 39, 41, // 10 led green thẳng
                 43, 45, 47, 49, 51, 53, 26, 28,   // 8 led green chéo
                 14, 30, 32, 34, 36, 38, 40, 42, 44, 46, // 10 led red thẳng
                 48, 50, 52, 22, 15, 0, 1, 2  // 8 led red chéo
@@ -87,15 +90,19 @@ void setup() {
   ledred.Connect(pins + ledcolor * 2, OUTPUT);
   // 13h10 8/6/2024 
   ///
+  //Serial.begin(9600);
+  myLCD.setLCD();
+  //button.setButton();
   xTaskCreate(TaskBlinkSEG , " SEG ", 128 , NULL , 1 , NULL);
   xTaskCreate(TaskBlinkLED , " LED ", 128 , NULL , 1 , NULL);
+  xTaskCreate(TaskBlinkLCD , " LCD ", 128 , NULL , 1 , NULL);
 
   vTaskStartScheduler();
 
   ///
 }
 
-int minutes = 1;
+
 
 void time(byte mns, int index) {
   ss.Display(mns);
@@ -109,12 +116,13 @@ long v = 0;
 
 void LED(){
   // ntuanh
+  
   int time_delay = minutes * 1000 ;
-  time_delay *= 30 ;
+  time_delay *= 60 ;
+  //Serial.println(time_delay);
   delay( time_delay );
-  delay( time_delay );
-  //
-
+  //delay( time_delay );
+  
   Mode1.Mode(0, rePins);
   Mode1.Offled();
 
@@ -136,9 +144,10 @@ void LED(){
 }
 
 void SEG(){
-  for (int i = minutes - 1 ; i >= 0  ; i--) {
+  
+  for (int i = int(minutes) - 1 ; i >= 0  ; i--) {
     for (int j = 59; j >= 0 ; j--) {
-      for (int k = 0; k < 25; k++) {
+      for (int k = 0; k < 23; k++) {
         time(i / 10, 0);
         time(i % 10, 1);
         time(j / 10, 2);
@@ -146,6 +155,19 @@ void SEG(){
       }
     }
   }
+  //
+  float r = minutes - int(minutes);
+  int second = r * 60 ;
+  for (int j = second; j >= 0 ; j--) {
+      for (int k = 0; k < 23; k++) {
+        time(0, 0);
+        time(0, 1);
+        time(j / 10, 2);
+        time(j % 10, 3);
+      }
+  }
+  //check = true ;
+  //
 }
 void loop() {
 }
@@ -164,12 +186,15 @@ void TaskBlinkLED( void *pvParameters){
   (void) pvParameters ;
   for(;;)LED();
 }
+void TaskBlinkLCD( void *pvParameters){
+  (void) pvParameters ;
+  for(;;)RES();
+}
 ///
 
 
 
   
-
 
 
 
