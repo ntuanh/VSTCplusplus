@@ -2,7 +2,9 @@
 #include "Process.h"
 #include<Arduino_FreeRTOS.h>
 
-float minutes = 0.5;
+int seconds = 10 ;
+int *ptr_seconds = &seconds ;
+float minutes = 1;
 
 ///
 void TaskBlinkSEG(void *pvParameters);
@@ -83,6 +85,7 @@ Effect Mode3(ledgreen);
 Effect Mode4(ledred);
 
 void setup() {
+  Serial.begin(9600);
   ctr.Connect(pins7 + 7, OUTPUT);
   led.Connect(pins, OUTPUT);
   ledblue.Connect(pins, OUTPUT);
@@ -117,10 +120,10 @@ long v = 0;
 void LED(){
   // ntuanh
   
-  int time_delay = minutes * 1000 ;
-  time_delay *= 60 ;
+  //int time_delay = minutes * 1000 ;
+  //time_delay *= 60 ;
   //Serial.println(time_delay);
-  delay( time_delay );
+  //delay( time_delay );
   //delay( time_delay );
   
   Mode1.Mode(0, rePins);
@@ -169,6 +172,20 @@ void SEG(){
   //check = true ;
   //
 }
+
+void SEG_2(){
+  int sec = *ptr_seconds ;
+  sec -- ;
+  for ( int j = 0 ; j < 25 ; j ++){
+    time(0,0);
+    time(0,1);
+    if ( sec  < 0 ) sec = 0 ;
+    time(sec / 10 , 2);
+    time(sec % 10 , 3) ;
+    }
+  *ptr_seconds = sec ;
+  //Serial.println(*ptr_seconds);
+}
 void loop() {
 }
 
@@ -178,13 +195,22 @@ void loop() {
 void TaskBlinkSEG( void *pvParameters){
   (void) pvParameters ;
   for(;;){
-    SEG();
+  SEG_2();
+    //vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
 
 void TaskBlinkLED( void *pvParameters){
   (void) pvParameters ;
-  for(;;)LED();
+  for(;;){
+    if ( *ptr_seconds == 1){
+      LED();
+      Serial.println("led");
+      vTaskDelay(pdMS_TO_TICKS(3000));
+    }
+    Serial.println(*ptr_seconds);
+    }
+
 }
 void TaskBlinkLCD( void *pvParameters){
   (void) pvParameters ;
@@ -195,7 +221,6 @@ void TaskBlinkLCD( void *pvParameters){
 
 
   
-
 
 
 
